@@ -6,8 +6,8 @@ class SalesWindow {
     static discount = 0;
 
     static async render() {
-        const products = app.dataService.getAllProducts();
-        const customers = app.dataService.getAllCustomers();
+        const products = window.app?.dataService.getAllProducts();
+        const customers = window.app?.dataService.getAllCustomers();
 
         return `
             <div class="sales-container">
@@ -250,7 +250,7 @@ class SalesWindow {
     }
 
     static addToCart(productId) {
-        const product = app.dataService.getProductById(productId);
+        const product = window.app?.dataService.getProductById(productId);
         if (!product || product.stock <= 0) {
             app.showToast('خطأ', 'المنتج غير متوفر', 'error');
             return;
@@ -287,7 +287,7 @@ class SalesWindow {
             return;
         }
 
-        const product = app.dataService.getProductById(productId);
+        const product = window.app?.dataService.getProductById(productId);
         if (quantity > product.stock) {
             app.showToast('تنبيه', 'الكمية المطلوبة أكبر من المتوفر', 'warning');
             return;
@@ -408,7 +408,7 @@ class SalesWindow {
         };
 
         try {
-            const sale = app.dataService.createSale(saleData);
+            const sale = await window.app?.dataService?.createSale(saleData);
             
             // Show success message
             app.showToast('تم إتمام البيع بنجاح', `رقم المعاملة: ${sale.transactionId}`, 'success');
@@ -426,7 +426,7 @@ class SalesWindow {
     }
 
     static printReceipt(sale) {
-        const settings = app.dataService.getSettings();
+        const settings = window.app?.dataService.getSettings();
         let receiptHtml = `
             <div class="receipt-header">
                 <h3>${settings.receiptHeader}</h3>
@@ -481,13 +481,13 @@ class SalesWindow {
     }
 
     static filterProducts(searchTerm) {
-        const products = app.dataService.getAllProducts();
+        const products = window.app?.dataService.getAllProducts();
         const filteredProducts = Helpers.searchArray(products, searchTerm, ['name', 'flavor', 'category']);
         this.updateProductsGrid(filteredProducts);
     }
 
     static filterByCategory(category) {
-        const products = app.dataService.getAllProducts();
+        const products = window.app?.dataService.getAllProducts();
         const filteredProducts = category ? products.filter(p => p.category === category) : products;
         this.updateProductsGrid(filteredProducts);
     }

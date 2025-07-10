@@ -5,8 +5,8 @@ class ReportsWindow {
     static chartInstances = {};
 
     static async render() {
-        const stats = app.dataService.getDashboardStats();
-        const topProducts = app.dataService.getTopSellingProducts(10);
+        const stats = window.app?.dataService.getDashboardStats();
+        const topProducts = window.app?.dataService.getTopSellingProducts(10);
 
         return `
             <div class="reports-container">
@@ -77,7 +77,7 @@ class ReportsWindow {
     }
 
     static renderSalesReport(stats, topProducts) {
-        const chartData = app.dataService.getSalesChartData(30);
+        const chartData = window.app?.dataService.getSalesChartData(30);
         
         return `
             <div class="sales-report">
@@ -288,7 +288,7 @@ class ReportsWindow {
     }
 
     static renderInventoryReport() {
-        const products = app.dataService.getAllProducts();
+        const products = window.app?.dataService.getAllProducts();
         const lowStockProducts = products.filter(p => p.stock <= p.minStock);
         const outOfStockProducts = products.filter(p => p.stock <= 0);
         const totalValue = products.reduce((sum, p) => sum + (p.stock * p.cost), 0);
@@ -466,11 +466,11 @@ class ReportsWindow {
     }
 
     static renderFinancialReport() {
-        const sales = app.dataService.getAllSales();
+        const sales = window.app?.dataService.getAllSales();
         const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
         const totalCost = sales.reduce((sum, sale) => {
             return sum + sale.items.reduce((itemSum, item) => {
-                const product = app.dataService.getProductById(item.productId);
+                const product = window.app?.dataService.getProductById(item.productId);
                 return itemSum + (product ? product.cost * item.quantity : 0);
             }, 0);
         }, 0);
@@ -584,7 +584,7 @@ class ReportsWindow {
     }
 
     static renderCustomersReport() {
-        const customers = app.dataService.getAllCustomers();
+        const customers = window.app?.dataService.getAllCustomers();
         const totalCustomers = customers.length;
         const activeCustomers = customers.filter(c => c.visits > 0).length;
         const totalPurchases = customers.reduce((sum, c) => sum + c.totalPurchases, 0);
@@ -769,8 +769,8 @@ class ReportsWindow {
 
         switch (reportType) {
             case 'sales':
-                const stats = app.dataService.getDashboardStats();
-                const topProducts = app.dataService.getTopSellingProducts(10);
+                const stats = window.app?.dataService.getDashboardStats();
+                const topProducts = window.app?.dataService.getTopSellingProducts(10);
                 reportContent.innerHTML = this.renderSalesReport(stats, topProducts);
                 break;
             case 'inventory':
@@ -810,7 +810,7 @@ class ReportsWindow {
         // Sales trend chart
         const salesTrendCtx = document.getElementById('salesTrendChart');
         if (salesTrendCtx) {
-            const chartData = app.dataService.getSalesChartData(30);
+            const chartData = window.app?.dataService.getSalesChartData(30);
             this.chartInstances.salesTrend = new Chart(salesTrendCtx, {
                 type: 'line',
                 data: {
@@ -849,7 +849,7 @@ class ReportsWindow {
         // Category pie chart
         const categoryPieCtx = document.getElementById('categoryPieChart');
         if (categoryPieCtx) {
-            const products = app.dataService.getAllProducts();
+            const products = window.app?.dataService.getAllProducts();
             const categories = {};
             
             products.forEach(product => {
@@ -880,7 +880,7 @@ class ReportsWindow {
         // Payment method chart
         const paymentMethodCtx = document.getElementById('paymentMethodChart');
         if (paymentMethodCtx) {
-            const sales = app.dataService.getAllSales();
+            const sales = window.app?.dataService.getAllSales();
             const paymentMethods = {};
             
             sales.forEach(sale => {
@@ -924,7 +924,7 @@ class ReportsWindow {
         // Inventory by category chart
         const inventoryByCategoryCtx = document.getElementById('inventoryByCategoryChart');
         if (inventoryByCategoryCtx) {
-            const products = app.dataService.getAllProducts();
+            const products = window.app?.dataService.getAllProducts();
             const categories = {};
             
             products.forEach(product => {
@@ -961,7 +961,7 @@ class ReportsWindow {
         // Stock status chart
         const stockStatusCtx = document.getElementById('stockStatusChart');
         if (stockStatusCtx) {
-            const products = app.dataService.getAllProducts();
+            const products = window.app?.dataService.getAllProducts();
             const inStock = products.filter(p => p.stock > p.minStock).length;
             const lowStock = products.filter(p => p.stock > 0 && p.stock <= p.minStock).length;
             const outOfStock = products.filter(p => p.stock <= 0).length;
@@ -992,7 +992,7 @@ class ReportsWindow {
         // Revenue chart
         const revenueCtx = document.getElementById('revenueChart');
         if (revenueCtx) {
-            const chartData = app.dataService.getSalesChartData(30);
+            const chartData = window.app?.dataService.getSalesChartData(30);
             
             this.chartInstances.revenue = new Chart(revenueCtx, {
                 type: 'line',
@@ -1032,7 +1032,7 @@ class ReportsWindow {
         // Revenue breakdown chart
         const revenueBreakdownCtx = document.getElementById('revenueBreakdownChart');
         if (revenueBreakdownCtx) {
-            const topProducts = app.dataService.getTopSellingProducts(5);
+            const topProducts = window.app?.dataService.getTopSellingProducts(5);
             
             this.chartInstances.revenueBreakdown = new Chart(revenueBreakdownCtx, {
                 type: 'pie',
@@ -1114,30 +1114,30 @@ class ReportsWindow {
             case 'sales':
                 return {
                     type: 'sales',
-                    stats: app.dataService.getDashboardStats(),
-                    topProducts: app.dataService.getTopSellingProducts(10),
-                    salesData: app.dataService.getSalesChartData(30)
+                    stats: window.app?.dataService.getDashboardStats(),
+                    topProducts: window.app?.dataService.getTopSellingProducts(10),
+                    salesData: window.app?.dataService.getSalesChartData(30)
                 };
             case 'inventory':
                 return {
                     type: 'inventory',
-                    products: app.dataService.getAllProducts(),
+                    products: window.app?.dataService.getAllProducts(),
                     summary: {
-                        totalProducts: app.dataService.getAllProducts().length,
-                        lowStock: app.dataService.getAllProducts().filter(p => p.stock <= p.minStock).length,
-                        outOfStock: app.dataService.getAllProducts().filter(p => p.stock <= 0).length
+                        totalProducts: window.app?.dataService.getAllProducts().length,
+                        lowStock: window.app?.dataService.getAllProducts().filter(p => p.stock <= p.minStock).length,
+                        outOfStock: window.app?.dataService.getAllProducts().filter(p => p.stock <= 0).length
                     }
                 };
             case 'financial':
                 return {
                     type: 'financial',
-                    sales: app.dataService.getAllSales(),
+                    sales: window.app?.dataService.getAllSales(),
                     summary: this.calculateFinancialSummary()
                 };
             case 'customers':
                 return {
                     type: 'customers',
-                    customers: app.dataService.getAllCustomers(),
+                    customers: window.app?.dataService.getAllCustomers(),
                     summary: this.calculateCustomerSummary()
                 };
             default:
@@ -1146,11 +1146,11 @@ class ReportsWindow {
     }
 
     static calculateFinancialSummary() {
-        const sales = app.dataService.getAllSales();
+        const sales = window.app?.dataService.getAllSales();
         const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
         const totalCost = sales.reduce((sum, sale) => {
             return sum + sale.items.reduce((itemSum, item) => {
-                const product = app.dataService.getProductById(item.productId);
+                const product = window.app?.dataService.getProductById(item.productId);
                 return itemSum + (product ? product.cost * item.quantity : 0);
             }, 0);
         }, 0);
@@ -1164,7 +1164,7 @@ class ReportsWindow {
     }
 
     static calculateCustomerSummary() {
-        const customers = app.dataService.getAllCustomers();
+        const customers = window.app?.dataService.getAllCustomers();
         const totalPurchases = customers.reduce((sum, c) => sum + c.totalPurchases, 0);
         
         return {

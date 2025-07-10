@@ -5,7 +5,7 @@ class CustomersWindow {
     static currentCustomer = null;
 
     static async render() {
-        this.customers = app.dataService.getAllCustomers();
+        this.customers = window.app?.dataService.getAllCustomers();
         this.filteredCustomers = [...this.customers];
 
         return `
@@ -492,14 +492,14 @@ class CustomersWindow {
     }
 
     static viewCustomer(customerId) {
-        const customer = app.dataService.getCustomerById(customerId);
+        const customer = window.app?.dataService.getCustomerById(customerId);
         if (!customer) return;
 
         const modal = new bootstrap.Modal(document.getElementById('customerDetailsModal'));
         const content = document.getElementById('customer-details-content');
         
         // Get customer's purchase history
-        const sales = app.dataService.getAllSales().filter(sale => sale.customerId === customerId);
+        const sales = window.app?.dataService.getAllSales().filter(sale => sale.customerId === customerId);
         const recentSales = sales.slice(0, 5);
 
         content.innerHTML = `
@@ -624,14 +624,14 @@ class CustomersWindow {
     }
 
     static editCustomer(customerId) {
-        const customer = app.dataService.getCustomerById(customerId);
+        const customer = window.app?.dataService.getCustomerById(customerId);
         if (customer) {
             this.openCustomerModal(customer);
         }
     }
 
     static deleteCustomer(customerId) {
-        const customer = app.dataService.getCustomerById(customerId);
+        const customer = window.app?.dataService.getCustomerById(customerId);
         if (!customer) return;
 
         if (confirm(`هل أنت متأكد من حذف العميل "${customer.name}"؟`)) {
@@ -675,11 +675,11 @@ class CustomersWindow {
         try {
             if (this.currentCustomer) {
                 // Update existing customer
-                app.dataService.updateCustomer(this.currentCustomer.id, customerData);
+                window.app?.dataService.updateCustomer(this.currentCustomer.id, customerData);
                 app.showToast('تم التحديث', 'تم تحديث بيانات العميل بنجاح', 'success');
             } else {
                 // Add new customer
-                app.dataService.addCustomer(customerData);
+                window.app?.dataService.addCustomer(customerData);
                 app.showToast('تم الإضافة', 'تم إضافة العميل بنجاح', 'success');
             }
 
@@ -746,7 +746,7 @@ class CustomersWindow {
     }
 
     static refreshCustomers() {
-        this.customers = app.dataService.getAllCustomers();
+        this.customers = window.app?.dataService.getAllCustomers();
         this.filteredCustomers = [...this.customers];
         
         // Re-render the entire component

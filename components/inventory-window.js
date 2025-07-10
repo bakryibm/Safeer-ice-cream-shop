@@ -5,7 +5,7 @@ class InventoryWindow {
     static currentTransaction = null;
 
     static async render() {
-        this.inventory = app.dataService.getAllProducts();
+        this.inventory = window.app?.dataService.getAllProducts();
         this.filteredInventory = [...this.inventory];
 
         return `
@@ -511,7 +511,7 @@ class InventoryWindow {
     }
 
     static openQuickAdjustModal(productId) {
-        const product = app.dataService.getProductById(productId);
+        const product = window.app?.dataService.getProductById(productId);
         if (!product) return;
 
         const modal = new bootstrap.Modal(document.getElementById('quickAdjustModal'));
@@ -541,7 +541,7 @@ class InventoryWindow {
         const reason = document.getElementById('transaction-reason').value;
         const notes = document.getElementById('transaction-notes').value;
 
-        const product = app.dataService.getProductById(productId);
+        const product = window.app?.dataService.getProductById(productId);
         if (!product) {
             app.showToast('خطأ', 'المنتج غير موجود', 'error');
             return;
@@ -566,7 +566,7 @@ class InventoryWindow {
         }
 
         try {
-            app.dataService.updateProduct(productId, { stock: newStock });
+            window.app?.dataService.updateProduct(productId, { stock: newStock });
             
             // Log the transaction (in a real app, this would be stored in a separate transactions table)
             console.log('Stock transaction:', {
@@ -601,7 +601,7 @@ class InventoryWindow {
         }
 
         try {
-            app.dataService.updateProduct(productId, { stock: newStock });
+            window.app?.dataService.updateProduct(productId, { stock: newStock });
             
             app.showToast('تم بنجاح', 'تم تحديث المخزون بنجاح', 'success');
             
@@ -656,7 +656,7 @@ class InventoryWindow {
     }
 
     static refreshInventory() {
-        this.inventory = app.dataService.getAllProducts();
+        this.inventory = window.app?.dataService.getAllProducts();
         this.filteredInventory = [...this.inventory];
         
         // Re-render the entire component

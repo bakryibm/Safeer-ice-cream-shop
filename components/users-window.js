@@ -5,7 +5,7 @@ class UsersWindow {
     static currentUser = null;
 
     static async render() {
-        this.users = app.dataService.getAllUsers();
+        this.users = window.app?.dataService.getAllUsers();
         this.filteredUsers = [...this.users];
 
         return `
@@ -650,14 +650,14 @@ class UsersWindow {
     }
 
     static editUser(userId) {
-        const user = app.dataService.getUserById(userId);
+        const user = window.app?.dataService.getUserById(userId);
         if (user) {
             this.openUserModal(user);
         }
     }
 
     static deleteUser(userId) {
-        const user = app.dataService.getUserById(userId);
+        const user = window.app?.dataService.getUserById(userId);
         if (!user) return;
 
         if (user.username === 'admin') {
@@ -729,11 +729,11 @@ class UsersWindow {
         try {
             if (this.currentUser) {
                 // Update existing user
-                app.dataService.updateUser(this.currentUser.id, userData);
+                window.app?.dataService.updateUser(this.currentUser.id, userData);
                 app.showToast('تم التحديث', 'تم تحديث بيانات المستخدم بنجاح', 'success');
             } else {
                 // Add new user
-                app.dataService.addUser(userData);
+                window.app?.dataService.addUser(userData);
                 app.showToast('تم الإضافة', 'تم إضافة المستخدم بنجاح', 'success');
             }
 
@@ -761,7 +761,7 @@ class UsersWindow {
         }
 
         try {
-            app.dataService.updateUser(this.currentPasswordChangeUserId, { password: newPassword });
+            window.app?.dataService.updateUser(this.currentPasswordChangeUserId, { password: newPassword });
             app.showToast('تم التحديث', 'تم تغيير كلمة المرور بنجاح', 'success');
             
             // Close modal
@@ -869,7 +869,7 @@ class UsersWindow {
     }
 
     static refreshUsers() {
-        this.users = app.dataService.getAllUsers();
+        this.users = window.app?.dataService.getAllUsers();
         this.filteredUsers = [...this.users];
         
         // Re-render the entire component

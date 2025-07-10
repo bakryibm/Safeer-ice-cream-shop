@@ -5,7 +5,7 @@ class ProductsWindow {
     static currentProduct = null;
 
     static async render() {
-        this.products = app.dataService.getAllProducts();
+        this.products = await (window.app?.dataService?.getAllProducts() || Promise.resolve([]));
         this.filteredProducts = [...this.products];
 
         return `
@@ -382,19 +382,19 @@ class ProductsWindow {
     }
 
     static editProduct(productId) {
-        const product = app.dataService.getProductById(productId);
+        const product = window.app?.dataService.getProductById(productId);
         if (product) {
             this.openProductModal(product);
         }
     }
 
     static async deleteProduct(productId) {
-        const product = app.dataService.getProductById(productId);
+        const product = window.app?.dataService.getProductById(productId);
         if (!product) return;
 
         if (confirm(`هل أنت متأكد من حذف المنتج "${product.name}"؟`)) {
             try {
-                app.dataService.deleteProduct(productId);
+                window.app?.dataService.deleteProduct(productId);
                 this.refreshProducts();
                 app.showToast('تم الحذف', 'تم حذف المنتج بنجاح', 'success');
             } catch (error) {
@@ -427,11 +427,11 @@ class ProductsWindow {
         try {
             if (this.currentProduct) {
                 // Update existing product
-                app.dataService.updateProduct(this.currentProduct.id, productData);
+                window.app?.dataService.updateProduct(this.currentProduct.id, productData);
                 app.showToast('تم التحديث', 'تم تحديث المنتج بنجاح', 'success');
             } else {
                 // Add new product
-                app.dataService.addProduct(productData);
+                window.app?.dataService.addProduct(productData);
                 app.showToast('تم الإضافة', 'تم إضافة المنتج بنجاح', 'success');
             }
 
@@ -445,7 +445,7 @@ class ProductsWindow {
     }
 
     static refreshProducts() {
-        this.products = app.dataService.getAllProducts();
+        this.products = window.app?.dataService.getAllProducts();
         this.filteredProducts = [...this.products];
         this.updateTable();
     }

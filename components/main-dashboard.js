@@ -1,9 +1,18 @@
 // Main Dashboard Component
 class MainDashboard {
     static async render() {
-        const stats = app.dataService.getDashboardStats();
-        const topProducts = app.dataService.getTopSellingProducts(5);
-        const chartData = app.dataService.getSalesChartData(7);
+        const stats = await (window.app?.dataService?.getDashboardStats() || Promise.resolve({
+            todaySales: 0,
+            todayRevenue: 0,
+            monthSales: 0,
+            monthRevenue: 0,
+            totalProducts: 0,
+            totalCustomers: 0,
+            lowStockProducts: 0,
+            totalRevenue: 0
+        }));
+        const topProducts = await (window.app?.dataService?.getTopSellingProducts(5) || Promise.resolve([]));
+        const chartData = window.app?.dataService?.getSalesChartData(7) || [];
 
         return `
             <div class="dashboard-container">
@@ -259,7 +268,7 @@ class MainDashboard {
         const ctx = document.getElementById('salesChart');
         if (!ctx) return;
 
-        const chartData = app.dataService.getSalesChartData(7);
+        const chartData = window.app?.dataService?.getSalesChartData(7) || [];
         
         new Chart(ctx, {
             type: 'line',

@@ -4,7 +4,7 @@ class SettingsWindow {
     static originalSettings = {};
 
     static async render() {
-        this.settings = app.dataService.getSettings();
+        this.settings = window.app?.dataService.getSettings();
         this.originalSettings = Helpers.deepClone(this.settings);
 
         return `
@@ -825,7 +825,7 @@ class SettingsWindow {
             }
 
             // Save settings
-            app.dataService.updateSettings(newSettings);
+            window.app?.dataService.updateSettings(newSettings);
             this.settings = newSettings;
             this.originalSettings = Helpers.deepClone(newSettings);
 
@@ -893,7 +893,7 @@ class SettingsWindow {
 
     static createBackup() {
         try {
-            app.dataService.exportData();
+            window.app?.dataService.exportData();
             app.showToast('تم إنشاء النسخة الاحتياطية', 'تم إنشاء وتحميل النسخة الاحتياطية بنجاح', 'success');
         } catch (error) {
             app.showToast('خطأ', 'فشل في إنشاء النسخة الاحتياطية', 'error');
@@ -903,11 +903,11 @@ class SettingsWindow {
     static exportAllData() {
         try {
             const allData = {
-                products: app.dataService.getAllProducts(),
-                sales: app.dataService.getAllSales(),
-                customers: app.dataService.getAllCustomers(),
-                users: app.dataService.getAllUsers(),
-                settings: app.dataService.getSettings(),
+                products: window.app?.dataService.getAllProducts(),
+                sales: window.app?.dataService.getAllSales(),
+                customers: window.app?.dataService.getAllCustomers(),
+                users: window.app?.dataService.getAllUsers(),
+                settings: window.app?.dataService.getSettings(),
                 exportDate: new Date().toISOString(),
                 version: '1.0.0'
             };
@@ -941,7 +941,7 @@ class SettingsWindow {
 
         try {
             const fileContent = await Helpers.readFile(file);
-            const success = app.dataService.importData(fileContent);
+            const success = window.app?.dataService.importData(fileContent);
             
             if (success) {
                 app.showToast('تم الاستعادة', 'تم استعادة النسخة الاحتياطية بنجاح', 'success');
@@ -984,7 +984,7 @@ class SettingsWindow {
     }
 
     static refresh() {
-        this.settings = app.dataService.getSettings();
+        this.settings = window.app?.dataService.getSettings();
         this.originalSettings = Helpers.deepClone(this.settings);
         
         // Re-render the entire component
