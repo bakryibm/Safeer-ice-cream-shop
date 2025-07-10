@@ -104,39 +104,34 @@ class IceCreamApp {
         const contentArea = document.getElementById('content-area');
         
         // Show loading
-        contentArea.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div></div>';
+        contentArea.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">جاري التحميل...</p></div>';
 
         try {
             let componentHtml = '';
             
-            switch (componentName) {
-                case 'dashboard':
-                    componentHtml = await MainDashboard.render();
-                    break;
-                case 'sales':
-                    componentHtml = await SalesWindow.render();
-                    break;
-                case 'products':
-                    componentHtml = await ProductsWindow.render();
-                    break;
-                case 'inventory':
-                    componentHtml = await InventoryWindow.render();
-                    break;
-                case 'customers':
-                    componentHtml = await CustomersWindow.render();
-                    break;
-                case 'reports':
-                    componentHtml = await ReportsWindow.render();
-                    break;
-                case 'users':
-                    componentHtml = await UsersWindow.render();
-                    break;
-                case 'settings':
-                    componentHtml = await SettingsWindow.render();
-                    break;
-                default:
-                    componentHtml = '<div class="alert alert-warning">المكون غير متاح</div>';
+            // Check if component classes exist
+            const componentClasses = {
+                'dashboard': window.MainDashboard,
+                'sales': window.SalesWindow,
+                'products': window.ProductsWindow,
+                'inventory': window.InventoryWindow,
+                'customers': window.CustomersWindow,
+                'reports': window.ReportsWindow,
+                'users': window.UsersWindow,
+                'settings': window.SettingsWindow
+            };
+
+            const ComponentClass = componentClasses[componentName];
+            
+            if (!ComponentClass) {
+                throw new Error(`Component ${componentName} not found`);
             }
+
+            if (typeof ComponentClass.render !== 'function') {
+                throw new Error(`Component ${componentName} render method not found`);
+            }
+
+            componentHtml = await ComponentClass.render();
 
             contentArea.innerHTML = componentHtml;
             contentArea.classList.add('fade-in');
@@ -146,36 +141,41 @@ class IceCreamApp {
             
         } catch (error) {
             console.error('Error loading component:', error);
-            contentArea.innerHTML = '<div class="alert alert-danger">حدث خطأ في تحميل المكون</div>';
+            contentArea.innerHTML = `
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading">خطأ في تحميل المكون</h4>
+                    <p>حدث خطأ أثناء تحميل المكون: ${componentName}</p>
+                    <hr>
+                    <p class="mb-0">تفاصيل الخطأ: ${error.message}</p>
+                    <button class="btn btn-outline-danger mt-2" onclick="app.navigateToComponent('dashboard')">
+                        <i class="fas fa-home me-2"></i>العودة للرئيسية
+                    </button>
+                </div>`;
         }
     }
 
     initializeComponent(componentName) {
-        switch (componentName) {
-            case 'dashboard':
-                MainDashboard.init();
-                break;
-            case 'sales':
-                SalesWindow.init();
-                break;
-            case 'products':
-                ProductsWindow.init();
-                break;
-            case 'inventory':
-                InventoryWindow.init();
-                break;
-            case 'customers':
-                CustomersWindow.init();
-                break;
-            case 'reports':
-                ReportsWindow.init();
-                break;
-            case 'users':
-                UsersWindow.init();
-                break;
-            case 'settings':
-                SettingsWindow.init();
-                break;
+        try {
+            const componentClasses = {
+                'dashboard': window.MainDashboard,
+                'sales': window.SalesWindow,
+                'products': window.ProductsWindow,
+                'inventory': window.InventoryWindow,
+                'customers': window.CustomersWindow,
+                'reports': window.ReportsWindow,
+                'users': window.UsersWindow,
+                'settings': window.SettingsWindow
+            };
+
+            const ComponentClass = componentClasses[componentName];
+            
+            if (ComponentClass && typeof ComponentClass.init === 'function') {
+                ComponentClass.init();
+            } else {
+                console.warn(`Component ${componentName} init method not found`);
+            }
+        } catch (error) {
+            console.error(`Error initializing component ${componentName}:`, error);
         }
     }
 
@@ -244,3 +244,6 @@ class IceCreamApp {
 
 // Initialize the application
 const app = new IceCreamApp();
+
+// Make app globally available for components
+window.app = app;
